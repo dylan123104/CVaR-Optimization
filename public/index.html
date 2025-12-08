@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVaR Portfolio Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>CVaR Portfolio Dashboard</h1>
+    <p>Baseline vs Rebalance — loss-based mean–CVaR with caps and costs</p>
+  </header>
+
+  <section class="panel inputs">
+    <h2>Inputs</h2>
+    <div class="form-grid">
+      <label>Tickers (comma separated)
+    <textarea id="tickers" rows="2" placeholder="AAPL,MSFT,NVDA,GOOGL,META,AMZN,JPM,XOM,CVX,UNH"></textarea>
+      </label>
+      <label>Years of data
+        <input type="number" id="years" value="3" min="1" step="1">
+      </label>
+      <label>Alpha
+        <input type="number" id="alpha" value="0.95" step="0.01" min="0.5" max="0.999">
+      </label>
+      <label>Name cap
+        <input type="number" id="name_cap" value="0.2" step="0.01" min="0.01" max="1">
+      </label>
+      <label>Sector cap
+        <input type="number" id="sector_cap" value="0.5" step="0.01" min="0.01" max="1">
+      </label>
+      <label>λ CVaR
+        <input type="number" id="lambda_cvar" value="0.8" step="0.01">
+      </label>
+      <label>Buy cost
+        <input type="number" id="buy_cost" value="0.002" step="0.001" min="0">
+      </label>
+      <label>Sell cost
+        <input type="number" id="sell_cost" value="0.002" step="0.001" min="0">
+      </label>
+      <label>Turnover cap
+        <input type="number" id="turnover_cap" value="1.0" step="0.1" min="0">
+      </label>
+      <label>Rebalance day
+        <select id="rebalance_day">
+          <option value="midpoint">midpoint</option>
+          <option value="annual">annual (~252)</option>
+          <option value="semiannual">semiannual (~126)</option>
+        </select>
+      </label>
+      <label>Return target (0 for none or "equal_weight_mean")
+        <input type="text" id="return_target" value="0">
+      </label>
+      <label class="checkbox">
+        <input type="checkbox" id="use_cached" checked> Use cached CSVs if available
+      </label>
+    </div>
+    <button id="run-btn">Run Models</button>
+    <span id="status" class="status"></span>
+  </section>
+
+  <section class="panels">
+    <div class="panel" id="baseline-panel">
+      <h2>Baseline</h2>
+      <div class="metrics" id="baseline-metrics"></div>
+      <div class="chart" id="baseline-cvar"></div>
+      <div class="chart" id="baseline-weights"></div>
+      <div class="table" id="baseline-table"></div>
+    </div>
+    <div class="panel" id="rebalance-panel">
+      <h2>Rebalance</h2>
+      <div class="metrics" id="rebalance-metrics"></div>
+      <div class="chart" id="rebalance-cvar"></div>
+      <div class="chart" id="rebalance-weights"></div>
+      <div class="chart" id="rebalance-buysells"></div>
+      <div class="table" id="rebalance-table"></div>
+    </div>
+  </section>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
