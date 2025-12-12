@@ -43,12 +43,8 @@
       <label>Turnover cap
         <input type="number" id="turnover_cap" value="1.0" step="0.1" min="0">
       </label>
-      <label>Rebalance day
-        <select id="rebalance_day">
-          <option value="midpoint">midpoint</option>
-          <option value="annual">annual (~252)</option>
-          <option value="semiannual">semiannual (~126)</option>
-        </select>
+      <label>Rebalance day (midpoint or integer index)
+        <input type="text" id="rebalance_day" value="midpoint" placeholder="midpoint or e.g., 126">
       </label>
       <label>Return target (0 for none or "equal_weight_mean")
         <input type="text" id="return_target" value="0">
@@ -73,6 +69,7 @@
       <h2>Rebalance</h2>
       <div class="metrics" id="rebalance-metrics"></div>
       <div class="chart" id="rebalance-cvar"></div>
+      <div class="chart" id="rebalance-weights-pre"></div>
       <div class="chart" id="rebalance-weights"></div>
       <div class="chart" id="rebalance-buysells"></div>
       <div class="table" id="rebalance-table"></div>

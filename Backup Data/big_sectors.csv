@@ -9,31 +9,49 @@ JPM,Financial Services
 XOM,Energy
 CVX,Energy
 UNH,Healthcare
-AVGO,Technology
-CSCO,Technology
+BAC,Financial Services
+GS,Financial Services
+MS,Financial Services
+WFC,Financial Services
+COP,Energy
+JNJ,Healthcare
+PFE,Healthcare
+HD,Consumer Cyclical
+PG,Consumer Defensive
+KO,Consumer Defensive
+PEP,Consumer Defensive
+MA,Financial Services
+V,Financial Services
 ADBE,Technology
 CRM,Technology
-ORCL,Technology
+LIN,Basic Materials
+NKE,Consumer Cyclical
+MCD,Consumer Cyclical
+CSCO,Technology
+AVGO,Technology
+CAT,Industrials
+BA,Industrials
+GE,Industrials
+HON,Industrials
+MRK,Healthcare
+LOW,Consumer Cyclical
+COST,Consumer Defensive
+T,Communication Services
 INTC,Technology
 QCOM,Technology
 TXN,Technology
+ORCL,Technology
 AMD,Technology
 AMAT,Technology
 NOW,Technology
 PANW,Technology
 SHOP,Technology
 INTU,Technology
-BAC,Financial Services
-GS,Financial Services
-MS,Financial Services
-WFC,Financial Services
 C,Financial Services
 BLK,Financial Services
 SCHW,Financial Services
 BX,Financial Services
 AXP,Financial Services
-V,Financial Services
-MA,Financial Services
 PYPL,Financial Services
 SPGI,Financial Services
 ICE,Financial Services
@@ -42,7 +60,6 @@ CME,Financial Services
 AON,Financial Services
 CB,Financial Services
 TRV,Financial Services
-COP,Energy
 SLB,Energy
 EOG,Energy
 PSX,Energy
@@ -50,28 +67,17 @@ MPC,Energy
 OKE,Energy
 WMB,Energy
 HAL,Energy
-JNJ,Healthcare
-PFE,Healthcare
-MRK,Healthcare
 ABBV,Healthcare
 LLY,Healthcare
 TMO,Healthcare
 DHR,Healthcare
 ABT,Healthcare
 BMY,Healthcare
-HD,Consumer Cyclical
-LOW,Consumer Cyclical
-COST,Consumer Defensive
 TGT,Consumer Defensive
 WMT,Consumer Defensive
-MCD,Consumer Cyclical
 SBUX,Consumer Cyclical
-NKE,Consumer Cyclical
 BKNG,Consumer Cyclical
 MAR,Consumer Cyclical
-PG,Consumer Defensive
-KO,Consumer Defensive
-PEP,Consumer Defensive
 CL,Consumer Defensive
 KMB,Consumer Defensive
 MDLZ,Consumer Defensive
@@ -79,17 +85,11 @@ PM,Consumer Defensive
 MO,Consumer Defensive
 EL,Consumer Defensive
 KR,Consumer Defensive
-LIN,Basic Materials
-CAT,Industrials
 DE,Industrials
-HON,Industrials
-GE,Industrials
 UPS,Industrials
 FDX,Industrials
 LMT,Industrials
-BA,Industrials
 RTX,Industrials
-T,Communication Services
 VZ,Communication Services
 CMCSA,Communication Services
 DIS,Communication Services

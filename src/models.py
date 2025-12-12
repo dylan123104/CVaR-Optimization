@@ -188,8 +188,6 @@ def solve_rebalance_mean_cvar(ret_df: pd.DataFrame, sectors: pd.Series, params: 
         k = N // 2
     elif isinstance(rb, int):
         k = max(1, min(rb, N - 1))
-    elif rb >= len(ret_df):
-        raise ValueError("rebalance index is out of range")
     else:
         raise ValueError("rebalance_day not understood")
 

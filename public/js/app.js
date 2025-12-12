@@ -15,6 +15,10 @@ function getParams() {
     const num = Number(rtRaw);
     rtVal = isNaN(num) ? "none" : num;
   }
+  // rebalance day: midpoint or integer
+  const rbRaw = document.getElementById("rebalance_day").value.trim();
+  const rbVal = rbRaw.match(/^\d+$/) ? parseInt(rbRaw, 10) : "midpoint";
+
   return {
     tickers: document.getElementById("tickers").value || "AAPL,MSFT,NVDA,GOOGL,META,JPM,XOM",
     years: Number(document.getElementById("years").value || 3),
@@ -25,7 +29,7 @@ function getParams() {
     buy_cost: Number(document.getElementById("buy_cost").value || 0.002),
     sell_cost: Number(document.getElementById("sell_cost").value || 0.002),
     turnover_cap: Number(document.getElementById("turnover_cap").value || 1.0),
-    rebalance_day: document.getElementById("rebalance_day").value,
+    rebalance_day: rbVal,
     return_target: rtVal,
     use_cached: document.getElementById("use_cached").checked,
   };
@@ -42,17 +46,27 @@ function renderMetrics(el, data, extra = {}) {
     card("VaR", data.VaR.toFixed(6)),
     card("Objective", data.objective.toFixed(6)),
   ];
+  if (extra.name_cap !== undefined) rows.push(card("Name cap", extra.name_cap.toFixed(3)));
+  if (extra.sector_cap !== undefined) rows.push(card("Sector cap", extra.sector_cap.toFixed(3)));
+  if (extra.turnover_cap !== undefined) rows.push(card("Turnover cap", extra.turnover_cap.toFixed(3)));
   if (extra.turnover !== undefined) rows.push(card("Turnover", extra.turnover.toFixed(3)));
   el.innerHTML = rows.join("");
 }
 
-function renderTable(el, weights, buys, sells, extraInfo) {
+function renderTable(el, weights, buys, sells, extraInfo, preWeights) {
   const tickers = Object.keys(weights);
-  let html = "<table><tr><th>Ticker</th><th>Weight</th>";
+  let html = "<table><tr><th>Ticker</th>";
+  if (preWeights) html += "<th>Weight0</th>";
+  html += "<th>Weight</th>";
   if (buys) html += "<th>Buy</th><th>Sell</th>";
   html += "</tr>";
   tickers.forEach(t => {
-    html += `<tr><td>${t}</td><td>${weights[t].toFixed(4)}</td>`;
+    html += `<tr><td>${t}</td>`;
+    if (preWeights) {
+      const w0 = preWeights[t] || 0;
+      html += `<td>${w0.toFixed(4)}</td>`;
+    }
+    html += `<td>${weights[t].toFixed(4)}</td>`;
     if (buys) {
       html += `<td>${(buys[t] || 0).toFixed(4)}</td><td>${(sells[t] || 0).toFixed(4)}</td>`;
     }
@@ -118,13 +132,18 @@ async function runModels() {
     const data = await res.json();
     statusEl.textContent = "Done";
     // Baseline
-    renderMetrics(baselineMetricsEl, data.baseline);
+    renderMetrics(baselineMetricsEl, data.baseline, {
+      name_cap: data.baseline.name_cap,
+      sector_cap: data.baseline.sector_cap
+    });
     const baseExtra = `
-      Target return: ${data.baseline.target_return?.toFixed ? data.baseline.target_return.toFixed(6) : data.baseline.target_return}<br>
-      Binding name caps: ${data.baseline.binding_names.join(", ") || "None"}<br>
-      Binding sector caps: ${data.baseline.binding_sectors.join(", ") || "None"}
+      <ul class="extra-list">
+        <li><strong>Target return:</strong> ${data.baseline.target_return?.toFixed ? data.baseline.target_return.toFixed(6) : data.baseline.target_return}</li>
+        <li><strong>Binding name caps:</strong> ${data.baseline.binding_names.join(", ") || "None"}</li>
+        <li><strong>Binding sector caps:</strong> ${data.baseline.binding_sectors.join(", ") || "None"}</li>
+      </ul>
     `;
-    renderTable(baselineTableEl, data.baseline.weights, null, null, baseExtra);
+    renderTable(baselineTableEl, data.baseline.weights, null, null, baseExtra, null);
     renderBar("baseline-weights", data.baseline.weights, "Baseline weights");
     renderCvar("baseline-cvar", data.baseline.losses, {
       mean_loss_plot: data.baseline.mean_loss_plot,
@@ -132,14 +151,22 @@ async function runModels() {
       CVaR_plot: data.baseline.CVaR_plot,
     }, "Baseline CVaR");
     // Rebalance
-    renderMetrics(rebalanceMetricsEl, data.rebalance, { turnover: data.rebalance.turnover });
+    renderMetrics(rebalanceMetricsEl, data.rebalance, { 
+      turnover: data.rebalance.turnover,
+      name_cap: data.rebalance.name_cap,
+      sector_cap: data.rebalance.sector_cap,
+      turnover_cap: data.rebalance.turnover_cap
+    });
     const rebExtra = `
-      Target return: ${data.rebalance.target_return?.toFixed ? data.rebalance.target_return.toFixed(6) : data.rebalance.target_return}<br>
-      Binding name caps (w0): ${data.rebalance.binding_names0.join(", ") || "None"}<br>
-      Binding name caps (w1): ${data.rebalance.binding_names1.join(", ") || "None"}<br>
-      Binding sector caps: ${data.rebalance.binding_sectors.join(", ") || "None"}
+      <ul class="extra-list">
+        <li><strong>Target return:</strong> ${data.rebalance.target_return?.toFixed ? data.rebalance.target_return.toFixed(6) : data.rebalance.target_return}</li>
+        <li><strong>Binding name caps (w0):</strong> ${data.rebalance.binding_names0.join(", ") || "None"}</li>
+        <li><strong>Binding name caps (w1):</strong> ${data.rebalance.binding_names1.join(", ") || "None"}</li>
+        <li><strong>Binding sector caps:</strong> ${data.rebalance.binding_sectors.join(", ") || "None"}</li>
+      </ul>
     `;
-    renderTable(rebalanceTableEl, data.rebalance.w1, data.rebalance.buy, data.rebalance.sell, rebExtra);
+    renderTable(rebalanceTableEl, data.rebalance.w1, data.rebalance.buy, data.rebalance.sell, rebExtra, data.rebalance.w0);
+    renderBar("rebalance-weights-pre", data.rebalance.w0, "Rebalance weights (pre)");
     renderBar("rebalance-weights", data.rebalance.w1, "Rebalance weights (post)");
     renderBuySell("rebalance-buysells", data.rebalance.buy, data.rebalance.sell);
     renderCvar("rebalance-cvar", data.rebalance.losses, {

@@ -72,3 +72,8 @@ textarea, input, select {
 .table { margin-top: 12px; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 6px 8px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+
+.extra-list { margin: 6px 0 0 0; padding-left: 18px; font-size: 14px; }
+.extra-list li { margin-bottom: 2px; }
+.extra-info { margin-top: 6px; }
+

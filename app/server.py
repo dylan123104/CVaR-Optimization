@@ -40,6 +40,11 @@ def _parse_params(data: dict):
     use_cached = bool(data.get("use_cached", True))
     years = int(data.get("years", 3))
     lambda_cvar = float(data.get("lambda_cvar", 0.8))
+    rb_raw = data.get("rebalance_day", "midpoint")
+    if isinstance(rb_raw, str) and rb_raw.strip().isdigit():
+        rb_val = int(rb_raw.strip())
+    else:
+        rb_val = "midpoint"
     params = {
         "alpha": float(data.get("alpha", 0.95)),
         "lambda_cvar": lambda_cvar,
@@ -49,7 +54,7 @@ def _parse_params(data: dict):
         "buy_cost": float(data.get("buy_cost", 0.002)),
         "sell_cost": float(data.get("sell_cost", 0.002)),
         "turnover_cap": float(data.get("turnover_cap", 1.0)),
-        "rebalance_day": data.get("rebalance_day", "midpoint"),
+        "rebalance_day": rb_val,
         "return_target": data.get("return_target", "none"),
         "solver": data.get("solver", "highs"),
     }
@@ -139,6 +144,8 @@ def run_models():
             .join(sectors.rename("sector"))
             .groupby("sector")["w"].sum()
             ),
+            "name_cap": model_params["name_cap"],
+            "sector_cap": model_params["sector_cap"],
             "losses": base_stats["losses"],
             "VaR_plot": base_stats["VaR"],
             "CVaR_plot": base_stats["CVaR"],
@@ -166,6 +173,9 @@ def run_models():
                 .join(sectors.rename("sector"))
                 .groupby("sector")["w1"].sum()
             ),
+            "name_cap": model_params["name_cap"],
+            "sector_cap": model_params["sector_cap"],
+            "turnover_cap": model_params.get("turnover_cap", 1.0),
             "losses": reb_stats["losses"],
             "VaR_plot": reb_stats["VaR"],
             "CVaR_plot": reb_stats["CVaR"],
